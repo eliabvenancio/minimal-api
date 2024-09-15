@@ -1,17 +1,20 @@
+
+using System.Reflection.Metadata.Ecma335;
+using System.Data.Common;
+using Microsoft.EntityFrameworkCore;
 using MinimalApi.Dominio.Entidades;
+using MinimalApi.Dominio.Interces;
 using MinimalApi.DTOs;
 using MinimalApi.Infraestrutura.Db;
-using MinimalApi.Dominio.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace MinimalApi.Dominio.Servicos;
 
 public class VeiculoServico : IVeiculoServico
 {
     private readonly DbContexto _contexto;
-    public VeiculoServico(DbContexto contexto)
+    public VeiculoServico(DbContexto dbContext)
     {
-        _contexto = contexto;
+        _contexto = dbContext;
     }
 
     public void Apagar(Veiculo veiculo)
@@ -26,7 +29,7 @@ public class VeiculoServico : IVeiculoServico
         _contexto.SaveChanges();
     }
 
-    public Veiculo? BuscaPorId(int id)
+    public Veiculo? BuscarPorId(int id)
     {
         return _contexto.Veiculos.Where(v => v.Id == id).FirstOrDefault();
     }
@@ -37,19 +40,26 @@ public class VeiculoServico : IVeiculoServico
         _contexto.SaveChanges();
     }
 
-    public List<Veiculo> Todos(int? pagina = 1, string? nome = null, string? marca = null)
+  public List<Veiculo> Todos(int? pagina = null, string? nome = null, string? marca = null)
+{
+    var query = _contexto.Veiculos.AsQueryable();
+
+    if (!string.IsNullOrEmpty(nome))
     {
-        var query = _contexto.Veiculos.AsQueryable();
-        if(!string.IsNullOrEmpty(nome))
-        {
-            query = query.Where(v => EF.Functions.Like(v.Nome.ToLower(), $"%{nome}%"));
-        }
+        query = query.Where(v => EF.Functions.Like(v.Nome.ToLower(), $"%{nome}%"));
+    }
 
-        int itensPorPagina = 10;
-
-        if(pagina != null)
-            query = query.Skip(((int)pagina - 1) * itensPorPagina).Take(itensPorPagina);
-
+    // Se a página for null, retorna todos os veículos sem paginação
+    if (!pagina.HasValue)
+    {
         return query.ToList();
     }
+
+    int itensPorPagina = 10;
+    query = query.Skip((pagina.Value - 1) * itensPorPagina).Take(itensPorPagina);
+
+    return query.ToList();
+}
+
+
 }

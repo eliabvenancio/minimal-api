@@ -8,19 +8,20 @@ public class AdministradorTest
     [TestMethod]
     public void TestarGetSetPropriedades()
     {
-        // Arrange
+        // Arrange: Preparação das variáveis e instância do objeto 'Administrador' para o teste.
         var adm = new Administrador();
 
-        // Act
+        // Act: Atribuição de valores às propriedades do objeto 'Administrador'.
         adm.Id = 1;
-        adm.Email = "teste@teste.com";
-        adm.Senha = "teste";
+        adm.Email = "administrador@teste.com";
+        adm.Senha = "1234";
         adm.Perfil = "Adm";
 
-        // Assert
-        Assert.AreEqual(1, adm.Id);
-        Assert.AreEqual("teste@teste.com", adm.Email);
-        Assert.AreEqual("teste", adm.Senha);
-        Assert.AreEqual("Adm", adm.Perfil);
+        // Assert: Verificação se as propriedades retornam os valores esperados.
+        Assert.AreEqual(1, adm.Id);  // Verifica se o Id foi atribuído corretamente.
+        Assert.AreEqual("administrador@teste.com", adm.Email);  // Verifica se o Email foi atribuído corretamente.
+        Assert.AreEqual("1234", adm.Senha);  // Verifica se a Senha foi atribuída corretamente.
+        Assert.AreEqual("Adm", adm.Perfil);  // Verifica se o Perfil foi atribuído corretamente.
     }
+
 }
